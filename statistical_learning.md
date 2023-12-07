@@ -33,6 +33,25 @@ library(glmnet)
     ## Loaded glmnet 4.1-8
 
 ``` r
+knitr::opts_chunk$set(
+    echo = TRUE,
+    warning = FALSE,
+    fig.width = 8, 
+  fig.height = 6,
+  out.width = "90%",
+    dpi = 200
+)
+
+options(
+  ggplot2.continuous.colour = "viridis",
+  ggplot2.continuous.fill = "viridis"
+)
+
+scale_colour_discrete = scale_colour_viridis_d
+scale_fill_discrete = scale_fill_viridis_d
+
+theme_set(theme_minimal() + theme(legend.position = "bottom"))
+
 set.seed(11)
 ```
 
@@ -94,13 +113,7 @@ lasso_fit |>
   theme(legend.position = "none")
 ```
 
-    ## Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
-    ## ℹ Please use `linewidth` instead.
-    ## This warning is displayed once every 8 hours.
-    ## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
-    ## generated.
-
-![](statistical_learning_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
+<img src="statistical_learning_files/figure-gfm/unnamed-chunk-5-1.png" width="90%" />
 
 ``` r
 lasso_cv |> 
@@ -109,4 +122,40 @@ lasso_cv |>
   geom_point()  
 ```
 
-![](statistical_learning_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
+<img src="statistical_learning_files/figure-gfm/unnamed-chunk-6-1.png" width="90%" />
+
+# Penguins
+
+``` r
+library(palmerpenguins)
+
+data("penguins")
+
+penguins = 
+  penguins |> 
+  select(species, bill_length_mm, flipper_length_mm) |> 
+  drop_na() 
+
+penguins |> 
+  ggplot(aes(x = bill_length_mm, y = flipper_length_mm, color = species)) + 
+  geom_point()
+```
+
+<img src="statistical_learning_files/figure-gfm/unnamed-chunk-7-1.png" width="90%" />
+
+``` r
+kmeans_fit =
+  penguins |> 
+  select(-species) |> 
+  scale() |>
+  kmeans(centers = 3)
+
+penguins |> 
+  broom::augment(kmeans_fit, data = _) |> 
+  ggplot(
+    aes(x = bill_length_mm, y = flipper_length_mm,
+        color = .cluster, shape = species)) + 
+  geom_point(size = 2)
+```
+
+<img src="statistical_learning_files/figure-gfm/unnamed-chunk-8-1.png" width="90%" />

@@ -8,6 +8,25 @@ output: github_document
 ```{r}
 library(tidyverse)
 library(glmnet)
+knitr::opts_chunk$set(
+	echo = TRUE,
+	warning = FALSE,
+	fig.width = 8, 
+  fig.height = 6,
+  out.width = "90%",
+	dpi = 200
+)
+
+options(
+  ggplot2.continuous.colour = "viridis",
+  ggplot2.continuous.fill = "viridis"
+)
+
+scale_colour_discrete = scale_colour_viridis_d
+scale_fill_discrete = scale_fill_viridis_d
+
+theme_set(theme_minimal() + theme(legend.position = "bottom"))
+
 set.seed(11)
 
 ```
@@ -71,4 +90,37 @@ lasso_cv |>
   geom_point()  
 ```
 
+# Penguins
+```{r}
+library(palmerpenguins)
+
+data("penguins")
+
+penguins = 
+  penguins |> 
+  select(species, bill_length_mm, flipper_length_mm) |> 
+  drop_na() 
+
+penguins |> 
+  ggplot(aes(x = bill_length_mm, y = flipper_length_mm, color = species)) + 
+  geom_point()
+
+
+```
+
+
+```{r}
+kmeans_fit =
+  penguins |> 
+  select(-species) |> 
+  scale() |>
+  kmeans(centers = 3)
+
+penguins |> 
+  broom::augment(kmeans_fit, data = _) |> 
+  ggplot(
+    aes(x = bill_length_mm, y = flipper_length_mm,
+        color = .cluster, shape = species)) + 
+  geom_point(size = 2)
+```
 
